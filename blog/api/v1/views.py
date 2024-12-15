@@ -5,11 +5,19 @@ from blog.models import Post
 from rest_framework import status
 
 
-@api_view(["GET"])
+@api_view(["GET", "POST"])
 def api_post_list(request):
-    posts = Post.objects.filter(status=True)
-    serializer = PostSerializers(posts, many=True)
-    return Response(serializer.data)
+    if request.method == "GET":
+        posts = Post.objects.filter(status=True)
+        serializer = PostSerializers(posts, many=True)
+        return Response(serializer.data)
+    elif request.method == "POST":
+        serializer = PostSerializers(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
 
 
 @api_view()
