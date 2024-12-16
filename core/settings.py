@@ -138,3 +138,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # User manager config
 AUTH_USER_MODEL = "accounts.User"
+
+
+# Rest framework settings
+
+# REST_FRAMEWORK = {
+#     "DEFAULT_PERMISSION_CLASSES": [
+#         "rest_framework.permissions.IsAuthenticated",
+#     ]
+# }
