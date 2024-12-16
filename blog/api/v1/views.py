@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from .serializers import PostSerializers
 from blog.models import Post
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
+from rest_framework import mixins
 
 # @api_view(["GET", "POST"])
 # @permission_classes([IsAuthenticated])
@@ -22,20 +24,33 @@ from rest_framework.views import APIView
 #             return Response(serializer.errors)
 
 
-class PostList(APIView):
+# class PostList(APIView):
+
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request):
+#         posts = Post.objects.filter(status=True)
+#         serializer = PostSerializers(posts, many=True)
+#         return Response(serializer.data)
+
+#     def post(self, request):
+#         serializer = PostSerializers(data=request.data)
+#         serializer.is_valid()
+#         serializer.save()
+#         return Response(serializer.data)
+
+
+class PostList(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
 
     permission_classes = [IsAuthenticated]
+    serializer_class = PostSerializers
+    queryset = Post.objects.filter(status=True)
 
-    def get(self, request):
-        posts = Post.objects.filter(status=True)
-        serializer = PostSerializers(posts, many=True)
-        return Response(serializer.data)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
-    def post(self, request):
-        serializer = PostSerializers(data=request.data)
-        serializer.is_valid()
-        serializer.save()
-        return Response(serializer.data)
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 # @api_view(["GET", "PUT", "DELETE"])
