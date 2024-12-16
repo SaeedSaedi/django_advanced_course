@@ -1,3 +1,5 @@
+import re
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import PostSerializers
@@ -20,13 +22,17 @@ def api_post_list(request):
             return Response(serializer.errors)
 
 
-@api_view()
+@api_view(["GET", "PUT", "DELETE"])
 def api_post_detail(request, id):
-
-    try:
-        post = Post.objects.get(pk=id)
+    post = get_object_or_404(Post, pk=id, status=True)
+    if request.method == "GET":
         serializer = PostSerializers(post)
-
         return Response(serializer.data)
-    except Post.DoesNotExist:
-        return Response("Not found", status=status.HTTP_404_NOT_FOUND)
+    elif request.method == "PUT":
+        serializer = PostSerializers(post, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    elif request.method == "DELETE":
+        post.delete()
+        return Response({"detail": "Item removed successfully"})
