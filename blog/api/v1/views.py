@@ -1,11 +1,10 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from .serializers import PostSerializers
 from blog.models import Post
 from rest_framework.views import APIView
-
 
 # @api_view(["GET", "POST"])
 # @permission_classes([IsAuthenticated])
@@ -39,17 +38,40 @@ class PostList(APIView):
         return Response(serializer.data)
 
 
-@api_view(["GET", "PUT", "DELETE"])
-def api_post_detail(request, id):
-    post = get_object_or_404(Post, pk=id, status=True)
-    if request.method == "GET":
-        serializer = PostSerializers(post)
-        return Response(serializer.data)
-    elif request.method == "PUT":
+# @api_view(["GET", "PUT", "DELETE"])
+# def api_post_detail(request, id):
+#     post = get_object_or_404(Post, pk=id, status=True)
+#     if request.method == "GET":
+#         serializer = PostSerializers(post)
+#         return Response(serializer.data)
+#     elif request.method == "PUT":
+#         serializer = PostSerializers(post, data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.data)
+#     elif request.method == "DELETE":
+#         post.delete()
+#         return Response({"detail": "Item removed successfully"})
+
+
+class PostDetail(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = PostSerializers
+
+    def get(self, request, id):
+        post = get_object_or_404(Post, pk=id, status=True)
+        serializers = self.serializer_class(post)
+        return Response(serializers.data)
+
+    def put(self, request, id):
+        post = get_object_or_404(Post, pk=id, status=True)
         serializer = PostSerializers(post, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-    elif request.method == "DELETE":
+
+    def delete(self, request, id):
+        post = get_object_or_404(Post, pk=id, status=True)
         post.delete()
         return Response({"detail": "Item removed successfully"})
