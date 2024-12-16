@@ -25,6 +25,8 @@ from rest_framework.views import APIView
 
 class PostList(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         posts = Post.objects.filter(status=True)
         serializer = PostSerializers(posts, many=True)
