@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from .serializers import PostSerializers
 from blog.models import Post
 from rest_framework.views import APIView
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView, ListCreateAPIView
 from rest_framework import mixins
 
 # @api_view(["GET", "POST"])
@@ -40,17 +40,24 @@ from rest_framework import mixins
 #         return Response(serializer.data)
 
 
-class PostList(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+# class PostList(GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = PostSerializers
+#     queryset = Post.objects.filter(status=True)
+
+#     def get(self, request, *args, **kwargs):
+#         return self.list(request, *args, **kwargs)
+
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)
+
+
+class PostList(ListCreateAPIView):
 
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializers
     queryset = Post.objects.filter(status=True)
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
 
 
 # @api_view(["GET", "PUT", "DELETE"])
