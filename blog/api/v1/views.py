@@ -76,24 +76,45 @@ class PostList(ListCreateAPIView):
 #         return Response({"detail": "Item removed successfully"})
 
 
-class PostDetail(APIView):
+# class PostDetail(APIView):
 
+#     permission_classes = [IsAuthenticatedOrReadOnly]
+#     serializer_class = PostSerializers
+
+#     def get(self, request, id):
+#         post = get_object_or_404(Post, pk=id, status=True)
+#         serializers = self.serializer_class(post)
+#         return Response(serializers.data)
+
+#     def put(self, request, id):
+#         post = get_object_or_404(Post, pk=id, status=True)
+#         serializer = PostSerializers(post, data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.data)
+
+#     def delete(self, request, id):
+#         post = get_object_or_404(Post, pk=id, status=True)
+#         post.delete()
+#         return Response({"detail": "Item removed successfully"})
+
+
+class PostDetail(
+    GenericAPIView,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializers
+    queryset = Post.objects.filter(status=True)
+    lookup_field = "id"
 
-    def get(self, request, id):
-        post = get_object_or_404(Post, pk=id, status=True)
-        serializers = self.serializer_class(post)
-        return Response(serializers.data)
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
-    def put(self, request, id):
-        post = get_object_or_404(Post, pk=id, status=True)
-        serializer = PostSerializers(post, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
-    def delete(self, request, id):
-        post = get_object_or_404(Post, pk=id, status=True)
-        post.delete()
-        return Response({"detail": "Item removed successfully"})
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
