@@ -14,6 +14,7 @@ from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView,
 )
 from rest_framework import mixins
+from rest_framework import viewsets
 
 # @api_view(["GET", "POST"])
 # @permission_classes([IsAuthenticated])
@@ -132,3 +133,22 @@ class PostDetail(RetrieveAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAP
     serializer_class = PostSerializers
     queryset = Post.objects.filter(status=True)
     lookup_field = "id"
+
+
+class PostViewSet(viewsets.ViewSet):
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = PostSerializers
+    queryset = Post.objects.filter(status=True)
+
+    def list(self, request):
+        serializer = self.serializer_class(self.queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, id=None):
+        post_object = get_object_or_404(self.queryset, pk=id)
+        serializer = self.serializer_class(post_object)
+        return Response(serializer.data)
+
+    def create(self, request):
+        pass
