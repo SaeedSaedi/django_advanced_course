@@ -5,7 +5,14 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from .serializers import PostSerializers
 from blog.models import Post
 from rest_framework.views import APIView
-from rest_framework.generics import GenericAPIView, ListAPIView, ListCreateAPIView
+from rest_framework.generics import (
+    GenericAPIView,
+    ListAPIView,
+    ListCreateAPIView,
+    RetrieveAPIView,
+    RetrieveUpdateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
 from rest_framework import mixins
 
 # @api_view(["GET", "POST"])
@@ -99,22 +106,29 @@ class PostList(ListCreateAPIView):
 #         return Response({"detail": "Item removed successfully"})
 
 
-class PostDetail(
-    GenericAPIView,
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin,
-):
+# class PostDetail(
+#     GenericAPIView,
+#     mixins.RetrieveModelMixin,
+#     mixins.UpdateModelMixin,
+#     mixins.DestroyModelMixin,
+# ):
+#     permission_classes = [IsAuthenticatedOrReadOnly]
+#     serializer_class = PostSerializers
+#     queryset = Post.objects.filter(status=True)
+#     lookup_field = "id"
+
+#     def get(self, request, *args, **kwargs):
+#         return self.retrieve(request, *args, **kwargs)
+
+#     def put(self, request, *args, **kwargs):
+#         return self.update(request, *args, **kwargs)
+
+#     def delete(self, request, *args, **kwargs):
+#         return self.destroy(request, *args, **kwargs)
+
+
+class PostDetail(RetrieveAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializers
     queryset = Post.objects.filter(status=True)
     lookup_field = "id"
-
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
