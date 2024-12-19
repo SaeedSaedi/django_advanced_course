@@ -10,6 +10,9 @@ from blog.models import Category, Post
 
 class PostSerializers(serializers.ModelSerializer):
 
+    snippet = serializers.ReadOnlyField(source="get_snippet")
+    relative_url = serializers.URLField(source="get_absolute_api_url", read_only=True)
+
     class Meta:
         model = Post
         fields = [
@@ -17,9 +20,11 @@ class PostSerializers(serializers.ModelSerializer):
             "author",
             "title",
             "content",
+            "snippet",
             "status",
             "created_date",
             "published_date",
+            "relative_url",
         ]
 
 
