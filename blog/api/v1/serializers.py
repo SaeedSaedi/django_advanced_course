@@ -13,9 +13,9 @@ class PostSerializers(serializers.ModelSerializer):
     snippet = serializers.ReadOnlyField(source="get_snippet")
     relative_url = serializers.URLField(source="get_absolute_api_url", read_only=True)
     absolute_url = serializers.SerializerMethodField()
-    # category = serializers.SlugRelatedField(
-    #     many=False, slug_field="name", queryset=Category.objects.all()
-    # )
+    category = serializers.SlugRelatedField(
+        many=False, slug_field="id", queryset=Category.objects.all()
+    )
 
     class Meta:
         model = Post
@@ -39,8 +39,17 @@ class PostSerializers(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
+        request = self.context.get("request")
+        rep["state"] = "list"
+        if request.parser_context.get("kwargs").get("id"):
+            rep["state"] = "single"
+            rep.pop("snippet", None)
+            rep.pop("relative_url", None)
+            rep.pop("absolute_url", None)
+        else:
+            rep.pop("content")
         rep["category"] = CategorySerializer(instance.category).data
-        rep.pop("snippet", None)
+
         return rep
 
 
