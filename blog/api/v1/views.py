@@ -140,6 +140,7 @@ class PostViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializers
     queryset = Post.objects.filter(status=True)
+    lookup_url_kwarg = "id"
 
     def list(self, request):
         serializer = self.serializer_class(self.queryset, many=True)
