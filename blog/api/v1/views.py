@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from .serializers import PostSerializers
-from blog.models import Post
+from .serializers import PostSerializers, CategorySerializer
+from blog.models import Post, Category
 from rest_framework.views import APIView
 from rest_framework.generics import (
     GenericAPIView,
@@ -61,11 +61,11 @@ from rest_framework import viewsets
 #         return self.create(request, *args, **kwargs)
 
 
-class PostList(ListCreateAPIView):
+# class PostList(ListCreateAPIView):
 
-    permission_classes = [IsAuthenticated]
-    serializer_class = PostSerializers
-    queryset = Post.objects.filter(status=True)
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = PostSerializers
+#     queryset = Post.objects.filter(status=True)
 
 
 # @api_view(["GET", "PUT", "DELETE"])
@@ -128,28 +128,43 @@ class PostList(ListCreateAPIView):
 #         return self.destroy(request, *args, **kwargs)
 
 
-class PostDetail(RetrieveAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    serializer_class = PostSerializers
-    queryset = Post.objects.filter(status=True)
-    lookup_field = "id"
+# class PostDetail(RetrieveAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView):
+#     permission_classes = [IsAuthenticatedOrReadOnly]
+#     serializer_class = PostSerializers
+#     queryset = Post.objects.filter(status=True)
+#     lookup_field = "id"
 
 
-class PostViewSet(viewsets.ViewSet):
+# class PostViewSet(viewsets.ModeViewSet):
+
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = PostSerializers
+#     queryset = Post.objects.filter(status=True)
+#     lookup_url_kwarg = "id"
+
+#     def list(self, request):
+#         serializer = self.serializer_class(self.queryset, many=True)
+#         return Response(serializer.data)
+
+#     def retrieve(self, request, id=None):
+#         post_object = get_object_or_404(self.queryset, pk=id)
+#         serializer = self.serializer_class(post_object)
+#         return Response(serializer.data)
+
+#     def create(self, request):
+#         pass
+
+
+class PostModelViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializers
     queryset = Post.objects.filter(status=True)
     lookup_url_kwarg = "id"
 
-    def list(self, request):
-        serializer = self.serializer_class(self.queryset, many=True)
-        return Response(serializer.data)
 
-    def retrieve(self, request, id=None):
-        post_object = get_object_or_404(self.queryset, pk=id)
-        serializer = self.serializer_class(post_object)
-        return Response(serializer.data)
+class CategoryModelViewSet(viewsets.ModelViewSet):
 
-    def create(self, request):
-        pass
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
