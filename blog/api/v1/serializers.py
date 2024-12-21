@@ -48,7 +48,9 @@ class PostSerializers(serializers.ModelSerializer):
             rep.pop("absolute_url", None)
         else:
             rep.pop("content")
-        rep["category"] = CategorySerializer(instance.category).data
+        rep["category"] = CategorySerializer(
+            instance.category, context={"request": request}
+        ).data
 
         return rep
 
