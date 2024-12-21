@@ -15,6 +15,7 @@ from rest_framework.generics import (
 )
 from rest_framework import mixins
 from rest_framework import viewsets
+from .permissions import IsOwnerOrReadOnly
 
 # @api_view(["GET", "POST"])
 # @permission_classes([IsAuthenticated])
@@ -157,7 +158,7 @@ from rest_framework import viewsets
 
 class PostModelViewSet(viewsets.ModelViewSet):
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsOwnerOrReadOnly]
     serializer_class = PostSerializers
     queryset = Post.objects.filter(status=True)
     lookup_url_kwarg = "id"
