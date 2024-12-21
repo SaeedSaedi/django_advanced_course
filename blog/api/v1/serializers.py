@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from blog.models import Category, Post
-
+from accounts.models import Profile
 
 # class PostSerializers(serializers.Serializer):
 #     id = serializers.IntegerField()
@@ -32,6 +32,7 @@ class PostSerializers(serializers.ModelSerializer):
             "relative_url",
             "absolute_url",
         ]
+        read_only_fields = ["author"]
 
     def get_absolute_url(self, obj):
         request = self.context.get("request")
@@ -53,6 +54,12 @@ class PostSerializers(serializers.ModelSerializer):
         ).data
 
         return rep
+
+    def create(self, validated_data):
+        validated_data["author"] = Profile.objects.get(
+            user__id=self.context.get("request").user.id
+        )
+        return super().create(validated_data)
 
 
 class CategorySerializer(serializers.ModelSerializer):
