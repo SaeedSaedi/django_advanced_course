@@ -18,6 +18,7 @@ from rest_framework import viewsets
 from .permissions import IsOwnerOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from .paginations import LargeResultsSetPagination
 
 # @api_view(["GET", "POST"])
 # @permission_classes([IsAuthenticated])
@@ -168,6 +169,7 @@ class PostModelViewSet(viewsets.ModelViewSet):
     filterset_fields = ["category", "author", "status"]
     search_fields = ["title", "content"]
     ordering_fields = ["published_date"]
+    pagination_class = LargeResultsSetPagination
 
     @action(methods=["GET"], detail=False)
     def get_ok(self, request):
