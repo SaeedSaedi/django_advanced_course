@@ -22,11 +22,13 @@ urlpatterns = [
         views.ChangePasswordApiView.as_view(),
         name="change-password",
     ),
-    # path(
-    #     "activation/confirm",
-    # ),
+    path(
+        "activation/confirm/<str:token>",
+        views.ActivationEmailView.as_view(),
+        name="confirm-email",
+    ),
     # path(
     #     "activation/resend",
     # ),
-    path("test-email", views.TestEmailSend.as_view(), name="test-email"),
+    # path("test-email", views.TestEmailSend.as_view(), name="test-email"),
 ]
