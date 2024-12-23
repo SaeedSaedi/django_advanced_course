@@ -19,6 +19,7 @@ from accounts.models import Profile
 # from mail_templated import send_mail
 from mail_templated import EmailMessage
 from ..utils import EmailThread
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
@@ -31,9 +32,21 @@ class RegistrationApiView(generics.GenericAPIView):
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            data = {"email": serializer.validated_data["email"]}
+            email = serializer.validated_data["email"]
+            data = {"email": email}
+            user_obj = get_object_or_404(User, email=email)
+            token = self.get_tokens_for_user(user_obj)
+            email = EmailMessage(
+                "email/active.tpl", {"token": token}, "saeed@saeed.com", to=[email]
+            )
+            EmailThread(email).start()
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_tokens_for_user(self, user):
+
+        refresh = RefreshToken.for_user(user)
+        return str(refresh.access_token)
 
 
 class CustomObtainAuthToken(ObtainAuthToken):
@@ -97,19 +110,37 @@ class ProfileApiView(generics.RetrieveUpdateAPIView):
         return obj
 
 
-class TestEmailSend(generics.GenericAPIView):
+class ActivationEmailView(APIView):
 
-    def post(self, request, *args, **kwargs):
-        # send_mail(
-        #     "Subject here",
-        #     "Here is the message.",
-        #     "from@example.com",
-        #     ["to@example.com"],
-        #     fail_silently=False,
-        # )
-        # send_mail("email/hello.tpl", {"name": "ali"}, "saeed@saeed.com", ["hi@hi.com"])
-        email = EmailMessage(
-            "email/hello.tpl", {"name": "ali"}, "saeed@saeed.com", ["hi@hi.com"]
-        )
-        EmailThread(email).start()
-        return Response("email sent")
+    def get(self, request, token, *args, **kwargs):
+
+        return Response(token)
+
+
+# class TestEmailSend(generics.GenericAPIView):
+
+#     def post(self, request, *args, **kwargs):
+
+#         self.email = "saeed@saeed.com"
+#         user_obj = get_object_or_404(User, email=self.email)
+#         token = self.get_tokens_for_user(user_obj)
+
+#         # send_mail(
+#         #     "Subject here",
+#         #     "Here is the message.",
+#         #     "from@example.com",
+#         #     ["to@example.com"],
+#         #     fail_silently=False,
+#         # )
+#         # send_mail("email/hello.tpl", {"name": "ali"}, "saeed@saeed.com", ["hi@hi.com"])
+
+#         email = EmailMessage(
+#             "email/hello.tpl", {"token": token}, "saeed@saeed.com", ["hi@hi.com"]
+#         )
+#         EmailThread(email).start()
+#         return Response("email sent")
+
+#     def get_tokens_for_user(self, user):
+
+#         refresh = RefreshToken.for_user(user)
+#         return str(refresh.access_token)
