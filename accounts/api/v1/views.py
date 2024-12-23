@@ -14,8 +14,11 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from accounts.models import Profile
+
 # from django.core.mail import send_mail
-from mail_templated import send_mail
+# from mail_templated import send_mail
+from mail_templated import EmailMessage
+from ..utils import EmailThread
 
 User = get_user_model()
 
@@ -104,5 +107,9 @@ class TestEmailSend(generics.GenericAPIView):
         #     ["to@example.com"],
         #     fail_silently=False,
         # )
-        send_mail('email/hello.tpl', {'name': "ali"}, "saeed@saeed.com", ["hi@hi.com"])
+        # send_mail("email/hello.tpl", {"name": "ali"}, "saeed@saeed.com", ["hi@hi.com"])
+        email = EmailMessage(
+            "email/hello.tpl", {"name": "ali"}, "saeed@saeed.com", ["hi@hi.com"]
+        )
+        EmailThread(email).start()
         return Response("email sent")
