@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django_filters",
     "drf_spectacular",
     "rest_framework_simplejwt",
+    "mail_templated",
 ]
 
 MIDDLEWARE = [
