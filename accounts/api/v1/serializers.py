@@ -54,6 +54,10 @@ class CustomAuthTokenSerializer(serializers.Serializer):
             if not user:
                 msg = _("Unable to log in with provided credentials.")
                 raise serializers.ValidationError(msg, code="authorization")
+            if not user.is_verified:
+                raise serializers.ValidationError(
+                    {"details": "user not verified"}, code="verification"
+                )
         else:
             msg = _('Must include "username" and "password".')
             raise serializers.ValidationError(msg, code="authorization")

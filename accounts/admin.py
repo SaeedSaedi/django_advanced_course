@@ -16,14 +16,17 @@ from .models import Profile, User
 class CustomUserAdmin(UserAdmin):
     model = User
     # add_form = CustomUserCreationForm
-    list_display = ("email", "is_staff", "is_active", "is_superuser")
+    list_display = ("email", "is_staff", "is_active", "is_superuser", "is_verified")
     list_filter = ("email", "is_staff", "is_active", "is_superuser")
     search_fields = ("email",)
     ordering = ("email",)
 
     fieldsets = (
         ("Authentication", {"fields": ("email", "password")}),
-        ("Permission", {"fields": ("is_staff", "is_active", "is_superuser")}),
+        (
+            "Permission",
+            {"fields": ("is_staff", "is_active", "is_superuser", "is_verified")},
+        ),
         ("Group permissions", {"fields": ("groups", "user_permissions")}),
         ("Logs", {"fields": ("last_login",)}),
     )
@@ -40,6 +43,7 @@ class CustomUserAdmin(UserAdmin):
                     "is_staff",
                     "is_active",
                     "is_superuser",
+                    "is_verified",
                 ),
             },
         ),
