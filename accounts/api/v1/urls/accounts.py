@@ -27,8 +27,10 @@ urlpatterns = [
         views.ActivationEmailView.as_view(),
         name="confirm-email",
     ),
-    # path(
-    #     "activation/resend",
-    # ),
+    path(
+        "activation/resend",
+        views.ActivationResendEmailView.as_view(),
+        name="activation-resend",
+    ),
     # path("test-email", views.TestEmailSend.as_view(), name="test-email"),
 ]
