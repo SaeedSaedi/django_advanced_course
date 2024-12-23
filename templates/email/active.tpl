@@ -1,9 +1,10 @@
 {% extends "mail_templated/base.tpl" %}
 
 {% block subject %}
-Hello {{ name }}
+Active Link
 {% endblock %}
 
 {% block html %}
-This is an <strong>html</strong> message.
+Active Token
+http://127.0.0.1:8000/accounts/api/v1/activation/confirm/{{ token }}
 {% endblock %}
