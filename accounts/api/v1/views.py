@@ -9,6 +9,7 @@ from .serializers import (
     CustomAuthTokenSerializer,
     ChangePasswordSerializer,
     ProfileSerializer,
+    ActivationResendApiSerializer,
 )
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -20,6 +21,9 @@ from accounts.models import Profile
 from mail_templated import EmailMessage
 from ..utils import EmailThread
 from rest_framework_simplejwt.tokens import RefreshToken
+from decouple import config
+import jwt
+from jwt.exceptions import ExpiredSignatureError, InvalidSignatureError
 
 User = get_user_model()
 
@@ -113,8 +117,45 @@ class ProfileApiView(generics.RetrieveUpdateAPIView):
 class ActivationEmailView(APIView):
 
     def get(self, request, token, *args, **kwargs):
+        try:
+            token = jwt.decode(token, config("SECRET_KEY"), algorithms=["HS256"])
+            user_id = token.get("user_id")
 
-        return Response(token)
+        except ExpiredSignatureError:
+            Response({"details": "Expired"})
+        except InvalidSignatureError:
+            Response({"details": "invalid"})
+        user_obj = User.objects.get(pk=user_id)
+        if user_obj.is_verified:
+            return Response({"details": "your account was activated before"})
+        else:
+            user_obj.is_verified = True
+            user_obj.save()
+            return Response({"details": "your account activated"})
+
+
+class ActivationResendEmailView(generics.GenericAPIView):
+
+    serializer_class = ActivationResendApiSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = ActivationResendApiSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user_obj = serializer.validated_data["user"]
+        token = self.get_tokens_for_user(user_obj)
+        email = EmailMessage(
+            "email/active.tpl",
+            {"token": token},
+            "saeed@saeed.com",
+            to=[user_obj.email],
+        )
+        EmailThread(email).start()
+        return Response("email sent", status=status.HTTP_201_CREATED)
+
+    def get_tokens_for_user(self, user):
+
+        refresh = RefreshToken.for_user(user)
+        return str(refresh.access_token)
 
 
 # class TestEmailSend(generics.GenericAPIView):
