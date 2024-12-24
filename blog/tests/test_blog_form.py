@@ -1,6 +1,6 @@
 from django.test import SimpleTestCase, TestCase
 from ..forms import PostForm
-from datetime import datetime
+from django.utils import timezone
 from ..models import Category
 
 
@@ -14,7 +14,7 @@ class TestPostForm(TestCase):
                 "content": "test content",
                 "status": True,
                 "category": category_obj,
-                "published_date": datetime.now(),
+                "published_date": timezone.now().isoformat(),
             }
         )
 

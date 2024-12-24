@@ -157,5 +157,3 @@ ehthumbs_vista.db
 
 # Nginx
 nginx/config/default.conf
-
-pytest.ini

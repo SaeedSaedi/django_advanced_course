@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from accounts.models import User, Profile
 from blog.models import Post, Category
-from datetime import datetime
+from django.utils import timezone
 
 
 class TestBlogView(TestCase):
@@ -22,7 +22,7 @@ class TestBlogView(TestCase):
             content="test content",
             status=True,
             category=None,
-            published_date=datetime.now(),
+            published_date=timezone.now(),
         )
 
     def test_blog_index_response_200(self):

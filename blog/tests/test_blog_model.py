@@ -1,6 +1,6 @@
 from django.test import TestCase
 from ..models import Post, Category
-from datetime import datetime
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 from accounts.models import User, Profile
 
@@ -25,7 +25,7 @@ class TestPostModel(TestCase):
             content="test content",
             status=True,
             category=None,
-            published_date=datetime.now(),
+            published_date=timezone.now(),
         )
         self.assertTrue(Post.objects.filter(pk=post.id).exists())
         self.assertEqual(post.title, "test")

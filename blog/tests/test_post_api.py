@@ -1,7 +1,7 @@
 import pytest
 from rest_framework.test import APIClient
 from django.urls import reverse
-from datetime import datetime
+from django.utils import timezone
 from accounts.models import User
 from blog.models import Category
 import json
@@ -36,7 +36,7 @@ class TestPostApi:
             "title": "test",
             "content": "test content",
             "status": True,
-            "published_date": datetime.now(),
+            "published_date": timezone.now(),
         }
         response = api_client.post(url, data)
         assert response.status_code == 401
