@@ -161,7 +161,7 @@ from .paginations import LargeResultsSetPagination
 
 class PostModelViewSet(viewsets.ModelViewSet):
 
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated]
     serializer_class = PostSerializers
     queryset = Post.objects.filter(status=True)
     lookup_url_kwarg = "id"
