@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "rest_framework_simplejwt",
     "mail_templated",
+    "djoser",
 ]
 
 MIDDLEWARE = [
