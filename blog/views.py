@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.views.generic import ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Post
 
 # Create your views here.
@@ -34,6 +35,6 @@ class PostList(ListView):
         return posts
 
 
-class PostDetail(DetailView):
+class PostDetail(LoginRequiredMixin, DetailView):
 
     model = Post
