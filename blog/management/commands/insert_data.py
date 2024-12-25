@@ -2,6 +2,13 @@ from django.core.management.base import BaseCommand
 from faker import Faker
 from accounts.models import User, Profile
 from blog.models import Post, Category
+from django.utils import timezone
+
+category_list = [
+    "it",
+    "design",
+    "fun",
+]
 
 
 class Command(BaseCommand):
@@ -18,3 +25,16 @@ class Command(BaseCommand):
         profile.last_name = self.fake.last_name()
         profile.description = self.fake.paragraph(nb_sentences=3)
         profile.save()
+
+        for name in category_list:
+            Category.objects.get_or_create(name=name)
+
+        for _ in range(10):
+            Post.objects.create(
+                author=profile,
+                image="image/test.png",
+                title=self.fake.text(max_nb_chars=25),
+                content=self.fake.paragraph(nb_sentences=5),
+                status=True,
+                published_date=timezone.now(),
+            )
