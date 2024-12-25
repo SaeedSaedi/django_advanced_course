@@ -3,6 +3,7 @@ from faker import Faker
 from accounts.models import User, Profile
 from blog.models import Post, Category
 from django.utils import timezone
+import random
 
 category_list = [
     "it",
@@ -36,5 +37,6 @@ class Command(BaseCommand):
                 title=self.fake.text(max_nb_chars=25),
                 content=self.fake.paragraph(nb_sentences=5),
                 status=True,
+                category=Category.objects.get(name=random.choice(category_list)),
                 published_date=timezone.now(),
             )
