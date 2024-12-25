@@ -14,5 +14,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         user = User.objects.create_user(email=self.fake.email(), password="Test@123456")
         profile = Profile.objects.get(user=user)
-        print(user)
-        print(profile)
+        profile.first_name = self.fake.first_name()
+        profile.last_name = self.fake.last_name()
+        profile.description = self.fake.paragraph(nb_sentences=3)
+        profile.save()
