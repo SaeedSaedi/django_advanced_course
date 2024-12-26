@@ -25,6 +25,8 @@ services:
   celery_worker:
     build: .
     command: celery -A core worker -l INFO
+    volumes:
+      - .:/app
     depends_on:
       - redis
       - backend
