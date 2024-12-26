@@ -9,4 +9,5 @@ urlpatterns = [
     path("api/v2/", include("djoser.urls")),
     path("api/v2/", include("djoser.urls.jwt")),
     path("sendmailwithcelery/", views.send_mail, name="sendmail-celery"),
+    path("test/", views.test, name="test"),
 ]
